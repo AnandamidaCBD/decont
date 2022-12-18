@@ -5,6 +5,22 @@
 #   argument ($3) contains the word "yes"
 # - filter the sequences based on a word contained in their header lines:
 #   sequences containing the specified word in their header should be **excluded**
+
+wget -i $1 -P $2
+
+
+gunzip -k  ~/decont/data/*.fastq.gz
+mkdir -p ~/decont/data/descomprimidos
+mv data/*.fastq data/descomprimidos
+
+
+
+if [ "$3"  = "yes ]
+then
+	gunzip -k $2/$1
+fi
+
+
 #
 # Example of the desired filtering:
 #
