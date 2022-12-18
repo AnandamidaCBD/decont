@@ -5,7 +5,8 @@
 # The directory containing the samples is indicated by the first argument ($1).
 
 ##  for sid in $($(ls data/*.fastq.gz | cut | sed -s )
-##$2= data
-##$3= out/merged
-##
-cat $1/$3 > $2/$3.fastq.gz
+##$1= data
+##$2= out/merged
+##$3=sampleid
+
+cat $1/$3* > $2/$3.fastq.gz

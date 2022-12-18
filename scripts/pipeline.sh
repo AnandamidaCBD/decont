@@ -1,30 +1,32 @@
-#echo ' Download all the files specified in data/filenames
-for url in $(cat data/urls) #TODO
+echo "Descargando las secuencias de ARN archivo.fastq"
+for url in $(cat ~decont/data/urls)
 do
-    bash scripts/download.sh $url data
+    bash ~/decont/scripts/download.sh $url ~/decont/data
 done
 
-# echo 'Download the contaminants fasta file, uncompress it, and
-# filter to remove all small nuclear RNAs
-bash scripts/download.sh https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz res yes 
+echo "Descargando el genoma de referencia archivo.fasta, descompriendo y filtrando la secuencia ... "
 
-# echo 'Index the contaminants file
-bash scripts/index.sh res/contaminants.fasta res/contaminants_idx
+bash ~/decont/scripts/download.sh https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz ~/decont/res yes 
+
+echo "Realizando alineamiento sobre secuencia de referencia y generando un indice STAR ...."
+
+bash ~/decont/scripts/index.sh res/contaminants.fasta ~/decont/res/contaminants_idx
 
 
-mkdir -p  out/merged
+mkdir -p  ~/decont/out/merged
 
-#echo ' Merge the samples into a single file
+echo "Unión de las muestras_ARN en un único archivo ... "
+
 for sid in $((ls data/*.fastq.gz | cut -d"-" -f1 | sed 's:data/::') 
 do
     bash scripts/merge_fastqs.sh data out/merged $sid
 done
 
 
-mkdir -p out/trimmed
-mkdir -p log/cutadapt
+mkdir -p ~/decont/out/trimmed
+mkdir -p ~/decont/ log/cutadapt
 
-# echo ' run cutadapt for all merged files
+echo "Eliminando los adaptadores de la Secuencia_unión en CutAdapt..."
 
 
 
@@ -33,25 +35,25 @@ do  cutadapt \
     	-m 18 \
     	-a TGGAATTCTCGGGTGCCAAGG \
     	--discard-untrimmed \
-    	-o out/trimmed/${sampleid}.trimmed.fastq.gz out/merged/${sampleid}.fastq.gz > log/cutadapt/${sampleid}.log
+    	-o ~/decont/out/trimmed/${sampleid}.trimmed.fastq.gz ~/decont/out/merged/${sampleid}.fastq.gz > ~/decont/log/cutadapt/${sampleid}.log
 
 
 
 
 
 # echo ' run STAR for all trimmed files
-for fname in out/trimmed/*.fastq.gz
+for fname in ~/decont/out/trimmed/*.fastq.gz
 do
     # you will need to obtain the sample ID from the filename
-    sid=#TODO
-     mkdir -p out/star/$sid
+    sid= $($fname) #TODO
+     mkdir -p ~/decont/out/star/$sid
      STAR \
-	--runThreadN 4 \ 
-	--genomeDir res/contaminants_idx \
+	--runThreadN 4 \
+	--genomeDir ~/decont/res/contaminants_idx \
         --outReadsUnmapped Fastx \
 	--readFilesIn <fname> \
         --readFilesCommand gunzip -c \
-	--outFileNamePrefix out/start/$sid
+	--outFileNamePrefix ~/decont/out/start/$sid
 done 
 
 # TODO: create a log file containing information from cutadapt and star logs

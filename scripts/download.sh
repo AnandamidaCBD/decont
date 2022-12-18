@@ -6,6 +6,9 @@
 # - filter the sequences based on a word contained in their header lines:
 #   sequences containing the specified word in their header should be **excluded**
 
+##download_file =$1
+##out_direct=$2
+
 wget -i $1 -P $2
 
 

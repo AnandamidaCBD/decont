@@ -3,6 +3,9 @@
 
 # The STAR command is provided for you. You should replace the parts surrounded
 # by "<>" and uncomment it.
+##genomefile= $1
+##out_direct= $2
+
 
 mkdir -p res/contaminants_idx
 
