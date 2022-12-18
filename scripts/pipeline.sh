@@ -1,24 +1,35 @@
-echo "Iniciando script depurado de muestras de raton de secuenciacion de RNA... por C.Borja Romero Domínguez... a las $CI_JOB_STARTED_AT" "
+echo "#####################################################################################"
+echo "#####################################################################################"
+echo "##### Iniciando script depurado de muestras de raton de secuenciacion de RNA ########"
+echo "#####################################################################################"
+echo "##### C.Borja Romero Domínguez ##### srcit comenzado a las : $CI_JOB_STARTED_AT #####"
+echo "#####################################################################################"
+echo "#####################################################################################"
 
-echo "Descargando las secuencias de ARN archivo.fastq"
-for url in $(cat ~decont/data/urls)
+
+echo "##### Descargando las secuencias de ARN archivo.fastq.gz ##### "
+echo "##### descomprimiendo secuencias fastq #####"
+
+for url in $(cat data/urls)
 do
-    bash ~/decont/scripts/download.sh $url ~/decont/data
+    bash scripts/download.sh $url data
 done
 
 echo
 
 
 
-echo "Descargando el genoma de referencia archivo.fasta, descompriendo y filtrando la secuencia ... "
-bash ~/decont/scripts/download.sh https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz ~/decont/res yes 
+echo "##### Descargando el genoma de referencia archivo.fasta.gz #####"
+echo "##### Descompriendo el genoma .fasta #####"
+echo "##### Filtrando la secuencia #####"
+bash scripts/download.sh https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz res yes
 
 echo
 
 
 
-echo "Realizando alineamiento sobre secuencia de referencia STAR ...."
-bash ~/decont/scripts/index.sh res/contaminants.fasta ~/decont/res/contaminants_idx
+echo "##### Generando indice STAR del genoma #####"
+bash scripts/index.sh res/contaminants.fasta res/contaminants_idx
 
 echo
 
@@ -26,8 +37,8 @@ echo
 
 mkdir -p  ~/decont/out/merged
 
-echo "Unión de las muestras_ARN en un único archivo ... "
-for sid in $((ls data/*.fastq.gz | cut -d"-" -f1 | sed 's:data/::') 
+echo "##### Unión de las muestras_ARN en un único archivo #####"
+for sid in $(ls data/*.fastq.gz | cut -d"-" -f1 | sed 's:data/::')
 do
     bash scripts/merge_fastqs.sh data out/merged $sid
 done
@@ -40,7 +51,7 @@ echo
 mkdir -p ~/decont/out/trimmed
 mkdir -p ~/decont/ log/cutadapt
 
-echo "Eliminando los adaptadores de la Secuencia_unión en CutAdapt..."
+echo "##### Eliminando los adaptadores de la Secuencia_unión en CutAdapt #####"
 for sampleid in $()
 do  cutadapt \
     	-m 18 \
@@ -52,7 +63,7 @@ echo
 
 
 
-echo "Generando indice STAR apartir de las secuencias_recortadas ..."
+echo "##### Alineamiento de las secuencias_recortadas con el genoma de referencia #####"
 for fname in ~/decont/out/trimmed/*.fastq.gz
 do
     # you will need to obtain the sample ID from the filename

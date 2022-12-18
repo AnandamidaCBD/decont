@@ -3,8 +3,11 @@
 
 # The STAR command is provided for you. You should replace the parts surrounded
 # by "<>" and uncomment it.
-##genomefile= $1
-##out_direct= $2
+
+
+
+genomefile= $1
+out_direct= $2
 
 
 mkdir -p res/contaminants_idx
@@ -12,6 +15,6 @@ mkdir -p res/contaminants_idx
 STAR \
     --runThreadN 4 \
     --runMode genomeGenerate \
-    --genomeDir $2 \
-    --genomeFastaFiles $1 \
+    --genomeDir $2{genomefile} \
+    --genomeFastaFiles $1{out_direct} \
     --genomeSAindexNbases 9

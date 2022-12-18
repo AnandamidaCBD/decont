@@ -6,22 +6,28 @@
 # - filter the sequences based on a word contained in their header lines:
 #   sequences containing the specified word in their header should be **excluded**
 
-##download_file =$1
-##out_direct=$2
+
+
+
+download_file=$1
+out_direct=$2
 
 wget -i $1 -P $2
 
 
-gunzip -k  ~/decont/data/*.fastq.gz
-mkdir -p ~/decont/data/descomprimidos
-mv data/*.fastq data/descomprimidos
+gunzip -k  data/*.fastq.gz
+mkdir -p data/sec_fastq
+mv data/*.fastq data/sec_fastq
 
 
 
-if [ "$3"  = "yes ]
+if [ "$3" == "yes" ]
 then
 	gunzip -k $2/$1
 fi
+
+
+
 
 
 #
@@ -35,3 +41,5 @@ fi
 #   CCAGGATTTACAGACTTTAAA
 #
 #   If $4 == "another" only the **first two sequence** should be output
+
+
