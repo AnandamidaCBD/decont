@@ -10,9 +10,9 @@
 
 
 download_file=$1
-out_direct=$2
+sampleid=$(basename $1)
 
-wget -i $1 -P $2
+wget -P $2 $1
 
 
 gunzip -k  data/*.fastq.gz

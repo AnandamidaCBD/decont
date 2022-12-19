@@ -1,3 +1,5 @@
+CI_JOB_STARTED_AT=$date
+
 echo "#####################################################################################"
 echo "#####################################################################################"
 echo "##### Iniciando script depurado de muestras de raton de secuenciacion de RNA ########"
@@ -12,7 +14,7 @@ echo "##### descomprimiendo secuencias fastq #####"
 
 for url in $(cat data/urls)
 do
-    bash scripts/download.sh $url data
+    bash scripts/download.sh $url data/
 done
 
 echo
@@ -22,7 +24,7 @@ echo
 echo "##### Descargando el genoma de referencia archivo.fasta.gz #####"
 echo "##### Descompriendo el genoma .fasta #####"
 echo "##### Filtrando la secuencia #####"
-bash scripts/download.sh https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz res yes
+bash scripts/download.sh https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz res/ yes
 
 echo
 
@@ -35,7 +37,7 @@ echo
 
 
 
-mkdir -p  ~/decont/out/merged
+mkdir -p  out/merged
 
 echo "##### Unión de las muestras_ARN en un único archivo #####"
 for sid in $(ls data/*.fastq.gz | cut -d"-" -f1 | sed 's:data/::')
@@ -48,8 +50,8 @@ echo
 
 
 
-mkdir -p ~/decont/out/trimmed
-mkdir -p ~/decont/ log/cutadapt
+mkdir -p out/trimmed
+mkdir -p log/cutadapt
 
 echo "##### Eliminando los adaptadores de la Secuencia_unión en CutAdapt #####"
 for sampleid in $()
@@ -64,18 +66,18 @@ echo
 
 
 echo "##### Alineamiento de las secuencias_recortadas con el genoma de referencia #####"
-for fname in ~/decont/out/trimmed/*.fastq.gz
+for fname in out/trimmed/*.fastq.gz
 do
     # you will need to obtain the sample ID from the filename
     sid= $($fname) #TODO
-     mkdir -p ~/decont/out/star/$sid
+     mkdir -p out/star/$sid
      STAR \
 	--runThreadN 4 \
 	--genomeDir ~/decont/res/contaminants_idx \
         --outReadsUnmapped Fastx \
 	--readFilesIn <fname> \
         --readFilesCommand gunzip -c \
-	--outFileNamePrefix ~/decont/out/start/$sid
+	--outFileNamePrefix out/start/$sid
 done 
 
 echo
