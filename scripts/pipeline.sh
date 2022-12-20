@@ -44,7 +44,7 @@ do
     bash scripts/merge_fastqs.sh data out/merged $sampleid
 done
 
-echo "##### Se han unido las $sampleid en un único archivo satisfactoriamente! #####"
+echo "##### Se han unido las secuencias en un único archivo satisfactoriamente! #####"
 
 
 
@@ -61,7 +61,7 @@ do  cutadapt \
     	-o out/trimmed/${sampleid}.trimmed.fastq.gz out/merged/${sampleid}.fastq.gz > log/cutadapt/${sampleid}.log
 done
 
-echo "##### Se han generado las $sampleid recortadas satisfactoriamente! #####"
+echo "##### Se han generado las secuencias $sampleid recortadas satisfactoriamente! #####"
 
 
 
@@ -72,7 +72,7 @@ mkdir -p out/star
 for fname in out/trimmed/*.fastq.gz
 do
 
-	sampleid=$(echo $fname | sed 's:out/trimmed/::' | cut -d "_" -f1)
+	sampleid=$(echo $fname | sed 's:out/trimmed/::' | cut -d "." -f1)
 	mkdir -p out/star/$sampleid
 
 	STAR \
@@ -84,29 +84,25 @@ do
 		--outFileNamePrefix out/start/$sampleid
 done
 
-echo " ##### Alineamiento de $sid ha finalizado satisfactoriamente #####"
+echo " ##### Alineamiento de la secuencia $sampleid ha finalizado satisfactoriamente #####"
 
-# TODO: create a log file containing information from cutadapt and star logs
-# (this should be a single log file, and information should be *appended* to it on each run)
-# - cutadapt: Reads with adapters and total basepairs
-# - star: Percentages of uniquely mapped reads, reads mapped to multiple loci, and to too many loci
-# tip: use grep to filter the lines you're interested in
+
 
 echo "##### Creando archivo_resumen .log contiendo la información de cutadapt y star #####"
 
 for fname in log/cutadapt/*.log
 do
-    sampleid=$(basename $fname .log)
+	sampleid=$(basename $fname .log)
 
-    echo "${sampleid}" >> log/summary.log
+	echo "${sampleid}" >> log/summary.log
 
-    cat log/cutadapt/${sampleid}.log | egrep "Reads with |Total basepairs" >> log/summary.log
-    cat out/star/${sampleid}/Log.final.out | egrep "reads %|% of reads mapped to (multiple|too)" >> log/summary.log
-
-    echo >> log/summary.log
+	echo $(cat log/cutadapt/${sampleid}.log | egrep "Reads with |Total basepairs") >> log/summary.log
+	echo $(cat out/star/${sampleid}/${sampleid}Log.final.out | egrep "% of reads mapped to (multiple|too)") >> log/summary.log
+	echo $(cat out/star/${sampleid}/${sampleid}Log.final.out | egrep " Uniquely mapped reads % ") >> log/summary.log
+	echo >> log/summary.log
 done
 
-echo "##### Archivo_resumen .log creado #####"
+echo "##### Archivo_resumen.log creado #####"
 
 
 
