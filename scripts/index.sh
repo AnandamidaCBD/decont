@@ -6,15 +6,15 @@
 
 
 
-genomefile= $1
-out_direct= $2
+genomefile=$1
+out_direct=$2
 
 
 mkdir -p res/contaminants_idx
 
 STAR \
-    --runThreadN 4 \
+    --runThreadN 8 \
     --runMode genomeGenerate \
-    --genomeDir $2{genomefile} \
-    --genomeFastaFiles $1{out_direct} \
+    --genomeDir $out_direct \
+    --genomeFastaFiles $genomefile \
     --genomeSAindexNbases 9

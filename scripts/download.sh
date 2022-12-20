@@ -21,9 +21,9 @@ mv data/*.fastq data/sec_fastq
 
 
 
-if [ "$3" == "yes" ]
+if [ "$3" = "yes" ]
 then
-	gunzip -k $2/$1
+	gunzip -k $2/$sampleid
 fi
 
 
@@ -40,6 +40,11 @@ fi
 #   > this is another sequence
 #   CCAGGATTTACAGACTTTAAA
 #
+
+##sampleid_filtrada=$(basename $sampleid .gz)
+
+###seqkit grep -v -p -r '.*small nuclear.*' -n $2/$sampleid > $2/$sampleid_filtrada
+
 #   If $4 == "another" only the **first two sequence** should be output
 
 
