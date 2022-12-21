@@ -5,13 +5,13 @@ echo "##########################################################################
 echo "##############################################################################################"
 echo "##### Iniciando ${my_name} script depurado de muestras de secuenciacion de RNA de raton #####"
 echo "##############################################################################################"
-echo "##### C.Borja Romero Domínguez ##### script comenzado a las:${NOW} #####"
+echo "##### C.Borja Romero Domínguez ##### script comenzado a las: ${NOW} ############"
 echo "##############################################################################################"
 echo "##############################################################################################"
 
 
 echo "##### Descargando las secuencias de ARN archivo.fastq.gz ##### "
-echo "##### descomprimiendo secuencias fastq #####"
+echo "##### Descomprimiendo las secuencias.fastq #####"
 
 for url in $(cat data/urls)
 do
@@ -23,16 +23,16 @@ echo
 
 
 echo "##### Descargando el genoma de referencia archivo.fasta.gz #####"
-echo "##### Descompriendo el genoma .fasta #####"
-echo "##### Filtrando la secuencia #####"
-bash scripts/download.sh https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz res/ yes
+echo "##### Descompriendo el genoma.fasta #####"
+echo "##### Filtrando el Genoma #####"
+bash scripts/download.sh https://bioinformatics.cnio.es/data/courses/decont/contaminants.fasta.gz res/ yes filtrar
 
 mkdir -p res/contaminants_idx
 
 echo "##### Generando indice STAR del genoma #####"
 bash scripts/index.sh res/contaminants.fasta res/contaminants_idx
 
-echo 
+echo
 
 
 
@@ -73,7 +73,7 @@ for fname in out/trimmed/*.fastq.gz
 do
 
 	sampleid=$(echo $fname | sed 's:out/trimmed/::' | cut -d "." -f1)
-	mkdir -p out/star/$sampleid
+
 
 	STAR \
 		--runThreadN 8 \
@@ -81,24 +81,24 @@ do
        		--outReadsUnmapped Fastx \
 		--readFilesIn $fname \
         	--readFilesCommand gunzip -c \
-		--outFileNamePrefix out/start/$sampleid
+		--outFileNamePrefix out/star/$sampleid
 done
 
-echo " ##### Alineamiento de la secuencia $sampleid ha finalizado satisfactoriamente #####"
+echo "##### Alineamiento de la secuencia $sampleid ha finalizado satisfactoriamente #####"
 
 
 
-echo "##### Creando archivo_resumen .log contiendo la información de cutadapt y star #####"
+echo "##### Creando archivo_resumen.log contiendo la información de cutadapt y star #####"
 
-for fname in log/cutadapt/*.log
+for sampleid in $(ls data/*.fastq.gz | cut -d"-" -f1 | sed 's:data/::')
 do
-	sampleid=$(basename $fname .log)
+
 
 	echo "${sampleid}" >> log/summary.log
 
 	echo $(cat log/cutadapt/${sampleid}.log | egrep "Reads with |Total basepairs") >> log/summary.log
-	echo $(cat out/star/${sampleid}/${sampleid}Log.final.out | egrep "% of reads mapped to (multiple|too)") >> log/summary.log
-	echo $(cat out/star/${sampleid}/${sampleid}Log.final.out | egrep " Uniquely mapped reads % ") >> log/summary.log
+	echo $(cat out/star/${sampleid}Log.final.out | egrep "% of reads mapped to (multiple|too)") >> log/summary.log
+	echo $(cat out/star/${sampleid}Log.final.out | egrep " Uniquely mapped reads % ") >> log/summary.log
 	echo >> log/summary.log
 done
 
@@ -107,4 +107,4 @@ echo "##### Archivo_resumen.log creado #####"
 
 
 END=$(date +"%r-%m-%d-%Y")
-echo " ###### el ${my_name} script finalizo satisfactoriamente a las ${END} #####"
+echo "###### El ${my_name} script finalizo satisfactoriamente a las ${END} #####"
