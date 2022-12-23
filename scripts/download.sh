@@ -1,3 +1,6 @@
+### LA COMPROBACIÓN DE SI EXISTE EL DIRECTORIO
+### NO ME FUNCIONA --> IF [ -E    ]
+
 # Definir Variables
 
 download_file=$1
